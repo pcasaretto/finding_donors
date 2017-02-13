@@ -1,0 +1,21 @@
+set -ev
+trap cleanup 1 2 3 6
+
+cleanup()
+{
+  echo "Caught Signal ... cleaning up."
+  rm -rf /tmp/temp_*.$$
+  gcloud compute instances stop datalabserver --zone "us-east1-b"
+  echo "Done cleanup ... quitting."
+  exit 1
+}
+
+gcloud compute instances start datalabserver --zone "us-east1-b"
+
+gcloud compute ssh --quiet \
+  --project "machinelearningengineer" \
+  --zone "us-east1-b" \
+  --ssh-flag="-N" \
+  --ssh-flag="-L" \
+  --ssh-flag="localhost:8081:localhost:8080" \
+  "${USER}@datalabserver"
