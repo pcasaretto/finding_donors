@@ -1,3 +1,5 @@
+#! env sh
+
 set -ev
 trap cleanup 1 2 3 6
 
